@@ -1,16 +1,16 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Deploys Part Management App on EC2 and RDS PostgreSQL Database
+Description: Deploys Inventory Management App on EC2 using RDS PostgreSQL Database for backend
 
 Resources:
   AWSProjectEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t2.micro
-      ImageId: ami-0523420044a1cd2b1 # Ensure this is a valid AMI ID for your region
-      KeyName: AWSProjectKeyPair # Update this with your actual key pair name
-      AvailabilityZone: ap-southeast-2b
+      ImageId: "<REPLACE_WITH_AMI_ID>" # Ensure this is a valid AMI ID for your region
+      KeyName: "<REPLACE_WITH_YOUR_KEY_PAIR_NAME>" # Update this with your actual key pair name
+      AvailabilityZone: "<REPLACE_WITH_AZ>" # Specify your preferred availability zone
       SecurityGroupIds:
-        - sg-02f9fea9849aad89a # Make sure this is the correct security group ID
+        - "<REPLACE_WITH_SECURITY_GROUP_ID>" # Replace with your actual security group ID
       UserData: !Base64 |
         #!/bin/bash
         echo "Starting user data script..." > /var/log/user-data.log
@@ -23,20 +23,26 @@ Resources:
         # Wait for instance to be fully initialized
         sleep 60
 
-        DB_USER=$(aws ssm get-parameter --name "PartManagementDBUserName" --with-decryption --query "Parameter.Value" --output text)
-        DB_PASS=$(aws ssm get-parameter --name "PartManagementDBPass" --with-decryption --query "Parameter.Value" --output text)
+        # Fetch DB credentials from SSM Parameter Store
+        DB_USER=$(aws ssm get-parameter --name "<REPLACE_WITH_SSM_PARAMETER_DB_USERNAME>" --with-decryption --query "Parameter.Value" --output text)
+        DB_PASS=$(aws ssm get-parameter --name "<REPLACE_WITH_SSM_PARAMETER_DB_PASSWORD>" --with-decryption --query "Parameter.Value" --output text)
+
+        # Get the RDS instance endpoint dynamically
+        DB_HOST=$(aws rds describe-db-instances --query "DBInstances[?DBInstanceIdentifier=='<REPLACE_WITH_RDS_INSTANCE_IDENTIFIER>'].Endpoint.Address" --output text)
+
         # Login to Amazon ECR
-        $(aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 715841360775.dkr.ecr.ap-southeast-2.amazonaws.com) >> /var/log/user-data.log 2>&1
+        $(aws ecr get-login-password --region <REPLACE_WITH_AWS_REGION> | docker login --username AWS --password-stdin <REPLACE_WITH_ECR_REGISTRY>) >> /var/log/user-data.log 2>&1
+
         # Pull the image from ECR
-        docker pull 715841360775.dkr.ecr.ap-southeast-2.amazonaws.com/naveeng4880/awsprojectrepo:latest >> /var/log/user-data.log 2>&1
+        docker pull <REPLACE_WITH_ECR_REPOSITORY>:latest >> /var/log/user-data.log 2>&1
+        
+        # Run the Docker container
         docker run -d -p 80:80 \
-         -e DB_Name=awsprojectstack-awsprojectpartmanagdb-ogl3ryhncznf \
+         -e DB_Name=<REPLACE_WITH_DB_NAME> \
          -e DB_User=$DB_USER \
          -e DB_Pass=$DB_PASS \
-         -e DB_HOST=awsprojectstack-awsprojectpartmanagdb-ogl3ryhncznf.chg844k20aok.ap-southeast-2.rds.amazonaws.com \
-         715841360775.dkr.ecr.ap-southeast-2.amazonaws.com/naveeng4880/awsprojectrepo:latest >> /var/log/user-data.log 2>&1
-        # newgrp docker # Might not be necessary, as group membership is applied after login
-
+         -e DB_HOST=$DB_HOST \
+         <REPLACE_WITH_ECR_REPOSITORY>:latest >> /var/log/user-data.log 2>&1
 
   AWSProjectSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -57,8 +63,9 @@ Resources:
     Properties:
       DBInstanceClass: db.t3.micro
       Engine: postgres
-      MasterUsername: '{{resolve:ssm:PartManagementDBUserName}}'
-      MasterUserPassword: '{{resolve:ssm-secure:PartManagementDBPass}}'
+      MasterUsername: '{{resolve:ssm:<REPLACE_WITH_SSM_PARAMETER_DB_USERNAME>}}'
+      MasterUserPassword: '{{resolve:ssm-secure:<REPLACE_WITH_SSM_PARAMETER_DB_PASSWORD>}}'
       AllocatedStorage: 20
       PubliclyAccessible: false
-      AvailabilityZone: ap-southeast-2b # Specify your preferred AZ
+      AvailabilityZone: "<REPLACE_WITH_AZ>" # Specify your preferred AZ
+      DBInstanceIdentifier: "<REPLACE_WITH_DB_INSTANCE_IDENTIFIER>"

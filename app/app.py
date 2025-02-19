@@ -18,17 +18,17 @@ def get_ssm_parameter(name, with_decryption=True):
         return None
 
 # Fetch SSM parameters
-DB_User = get_ssm_parameter("PartManagementDBUserName")
-DB_Pass = get_ssm_parameter("PartManagementDBPass")
+DB_User = get_ssm_parameter("<REPLACE_WITH_SSM_USER_NAME>")# Ref SSM parameter for username created in AWS SSM
+DB_Pass = get_ssm_parameter("<REPLACE_WITH_SSM_PASSWORD") # Ref SSM parameter created for password in AWS SSM
 
 # Database connection function
 def get_db_connection():
     try:
         conn =psycopg2.connect(
-        dbname="awsprojectstack-awsprojectpartmanagdb-ogl3ryhncznf",
-        user=DB_User,
-        password=DB_Pass,
-        host="awsprojectstack-awsprojectpartmanagdb-ogl3ryhncznf.chg844k20aok.ap-southeast-2.rds.amazonaws.com",   
+        dbname="<REPLACE_WITH_DB_NAME>", # replace with your DB name
+        user=DB_User, # replace with your DB user name
+        password=DB_Pass, # replace with your DB password 
+        host="<REPLACE_WITH_DB_ARN>.<REPLACE_WITH_AWS_REGION>.rds.amazonaws.com", # replace with your DB ARN from AWS RDS and your AWS Region   
         port="5432"
     )
         return conn
