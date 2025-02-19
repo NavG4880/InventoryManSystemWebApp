@@ -1,0 +1,61 @@
+name: Deploy Part Management System to AWS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+#      Step to login to docker 
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+#      Step build and push docker image
+      - name: Configure Docker Details 
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./deployment/Dockerfile
+          push: true
+          tags: docker.io/naveeng4880/awsprojectrepo:latest
+
+#      Step to configure AWS credential details      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-2
+
+#      Step to login to ECR and push the docker image
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, Tag, and Push Docker image to ECR
+        run: |
+            docker build -t awsprojectrepo -f ./deployment/Dockerfile .
+            docker tag awsprojectrepo:latest 715841360775.dkr.ecr.ap-southeast-2.amazonaws.com/naveeng4880/awsprojectrepo:latest
+            docker push 715841360775.dkr.ecr.ap-southeast-2.amazonaws.com/naveeng4880/awsprojectrepo:latest
+
+      # Step to Deploy the CloudFormation stack in AWS (Check if the stack exists then create or update accordingly)
+      # - name: Deploy to AWS
+      #   run: |
+      #       STACK_NAME="AWSProjectStack"
+      #       STACK_EXISTS=$(aws cloudformation describe-stacks --stack-name $STACK_NAME --query "Stacks[0].StackName" --output text)
+            
+      #       if [ "$STACK_EXISTS" == "$STACK_NAME" ]; then
+      #           echo "Stack exists, updating stack..."
+      #           aws cloudformation update-stack --stack-name $STACK_NAME --template-body file://deployment/cloudformation.yaml --capabilities CAPABILITY_NAMED_IAM --region ap-southeast-2
+      #       else
+      #           echo "Stack does not exist, creating stack..."
+      #           aws cloudformation create-stack --stack-name $STACK_NAME --template-body file://deployment/cloudformation.yaml --capabilities CAPABILITY_NAMED_IAM --region ap-southeast-2
+#      Step to Deploy the cloudformation stack          
+      - name: Deploy to AWS
+        run: |
+            aws cloudformation update-stack --stack-name AWSProjectStack --template-body file://deployment/cloudformation.yaml --capabilities CAPABILITY_NAMED_IAM --region ap-southeast-2

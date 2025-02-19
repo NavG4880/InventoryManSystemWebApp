@@ -1,0 +1,212 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    #background-color: #f9f9f9;
+    background-color: white !important;
+    color: #333;
+    padding: 0 10px;
+}
+
+/* Header Styles */
+header {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation Bar Styling */
+nav {
+    display: flex;
+    justify-content: center;
+    background-color: #333;
+    padding: 10px 0;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+    nav a {
+        color: white;
+        padding: 14px 20px;
+        text-decoration: none;
+        text-align: center;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+
+        nav a:hover {
+            background-color: #4CAF50;
+            border-radius: 5px;
+        }
+
+        nav a.active {
+            background-color: #4CAF50;
+            border-radius: 5px;
+        }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+        nav a {
+            padding: 12px 18px;
+            width: 100%;
+            text-align: center;
+        }
+}
+
+/* Container Styles */
+.container {
+    margin: 40px auto;
+    padding: 20px;
+    max-width: 1200px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Form and Input Styles */
+form input,
+form select,
+form button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+    form input[type="text"],
+    form input[type="number"],
+    form select {
+        background-color: #f9f9f9;
+    }
+
+form button {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+    form button:hover {
+        background-color: #45a049;
+    }
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+}
+
+    table th, table td {
+        padding: 12px;
+        text-align: left;
+    }
+
+    table th {
+        background-color: #f4f4f4;
+        color: #555;
+        border-bottom: 2px solid #ddd;
+    }
+
+    table td {
+        border-bottom: 1px solid #ddd;
+    }
+
+    table tr:hover {
+        background-color: #f1f1f1;
+    }
+
+/* Actions Button Styles */
+.actions button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+    .actions button:hover {
+        background-color: #d32f2f;
+    }
+
+/* Filter Section Styles */
+.filters {
+    margin-bottom: 30px;
+}
+
+    .filters select,
+    .filters input[type="date"] {
+        margin-right: 10px;
+    }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        margin: 20px;
+    }
+
+    .navbar {
+        flex-direction: column;
+        align-items: center;
+    }
+
+        .navbar a {
+            padding: 12px 18px;
+        }
+
+    table th,
+    table td {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+}
+
+/* Dark Mode Styles (if applicable) */
+body.dark {
+    background-color: #333;
+    color: #fff;
+}
+
+    body.dark header {
+        background-color: #333;
+    }
+
+    body.dark .navbar {
+        background-color: #444;
+    }
+
+    body.dark .container {
+        background-color: #555;
+    }
+
+    body.dark form input,
+    body.dark form select,
+    body.dark form button {
+        background-color: #666;
+        color: #fff;
+    }
+
+    body.dark .actions button {
+        background-color: #d32f2f;
+    }

@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Deploys Part Management App on EC2 and RDS PostgreSQL Database
+
+Resources:
+  AWSProjectEC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: ami-0523420044a1cd2b1 # Ensure this is a valid AMI ID for your region
+      KeyName: AWSProjectKeyPair # Update this with your actual key pair name
+      AvailabilityZone: ap-southeast-2b
+      SecurityGroupIds:
+        - sg-02f9fea9849aad89a # Make sure this is the correct security group ID
+      UserData: !Base64 |
+        #!/bin/bash
+        echo "Starting user data script..." > /var/log/user-data.log
+        sudo yum update -y >> /var/log/user-data.log 2>&1
+        sudo yum install -y docker >> /var/log/user-data.log 2>&1
+        sudo systemctl start docker >> /var/log/user-data.log 2>&1
+        sudo systemctl enable docker >> /var/log/user-data.log 2>&1
+        sudo usermod -aG docker ec2-user >> /var/log/user-data.log 2>&1
+
+        # Wait for instance to be fully initialized
+        sleep 60
+
+        DB_USER=$(aws ssm get-parameter --name "PartManagementDBUserName" --with-decryption --query "Parameter.Value" --output text)
+        DB_PASS=$(aws ssm get-parameter --name "PartManagementDBPass" --with-decryption --query "Parameter.Value" --output text)
+        # Login to Amazon ECR
+        $(aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 715841360775.dkr.ecr.ap-southeast-2.amazonaws.com) >> /var/log/user-data.log 2>&1
+        # Pull the image from ECR
+        docker pull 715841360775.dkr.ecr.ap-southeast-2.amazonaws.com/naveeng4880/awsprojectrepo:latest >> /var/log/user-data.log 2>&1
+        docker run -d -p 80:80 \
+         -e DB_Name=awsprojectstack-awsprojectpartmanagdb-ogl3ryhncznf \
+         -e DB_User=$DB_USER \
+         -e DB_Pass=$DB_PASS \
+         -e DB_HOST=awsprojectstack-awsprojectpartmanagdb-ogl3ryhncznf.chg844k20aok.ap-southeast-2.rds.amazonaws.com \
+         715841360775.dkr.ecr.ap-southeast-2.amazonaws.com/naveeng4880/awsprojectrepo:latest >> /var/log/user-data.log 2>&1
+        # newgrp docker # Might not be necessary, as group membership is applied after login
+
+
+  AWSProjectSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTP and SSH
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  AWSProjectPartManagDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceClass: db.t3.micro
+      Engine: postgres
+      MasterUsername: '{{resolve:ssm:PartManagementDBUserName}}'
+      MasterUserPassword: '{{resolve:ssm-secure:PartManagementDBPass}}'
+      AllocatedStorage: 20
+      PubliclyAccessible: false
+      AvailabilityZone: ap-southeast-2b # Specify your preferred AZ

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management System - Home</title>
+    <!-- Link to your styles.css -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts: Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+</head>
+<body>
+
+    <header>
+        <h1>Inventory Management System - Home</h1>
+    </header>
+
+    <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('add_part_page') }}">Add Part</a>
+        <a href="{{ url_for('view_parts_page') }}">View Parts</a>
+        <a href="{{ url_for('reports_page') }}">Reports</a>
+        <!--<a href="{{ url_for('settings_page') }}">Settings</a>-->
+    </nav>
+
+    <div class="container">
+        <h2>Add New Part</h2>
+        <form id="addPartForm">
+            <div class="mb-3">
+                <label for="name" class="form-label">Part Name</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="Enter part name" required>
+            </div>
+            <div class="mb-3">
+                <label for="part_number" class="form-label">Part Number</label>
+                <input type="text" id="part_number" name="part_number" class="form-control" placeholder="Enter part number" required>
+            </div>
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Enter quantity" required>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select id="category" name="category" class="form-control" required>
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="electrical">Electrical</option>
+                    <option value="mechanical">Mechanical</option>
+                    <option value="hydraulic">Hydraulic</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Part</button>
+        </form>
+
+        <h2>Parts Inventory</h2>
+        <!-- Table to display parts inventory -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Part Name</th>
+                    <th>Part Number</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="partsTableBody">
+                {% for part in parts %}
+                <tr>
+                    <td>{{ part['name'] }}</td>
+                    <td>{{ part['part_number'] }}</td>
+                    <td>{{ part['category'] }}</td>
+                    <td>{{ part['quantity'] }}</td>
+                    <td>
+                        <button class="btn btn-primary">Edit</button>
+                        <button class="btn btn-danger">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <!-- ✅ Success/Error Bootstrap Modal -->
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalMessage"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

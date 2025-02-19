@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - Part Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Settings</h2>
+    <form method="POST">
+        <label for="theme">Select Theme:</label>
+        <select name="theme" id="theme">
+            <option value="light" {% if theme == 'light' %}selected{% endif %}>Light</option>
+            <option value="dark" {% if theme == 'dark' %}selected{% endif %}>Dark</option>
+        </select>
+        <button type="submit">Save</button>
+    </form>
+</div>
+
+<script>
+    // JavaScript to handle theme change functionality
+    const themeSelect = document.getElementById('theme');
+    const saveButton = document.getElementById('save-settings');
+
+    // Load the saved theme on page load
+    window.onload = function () {
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.body.classList.add(savedTheme);
+            themeSelect.value = savedTheme;
+        }
+    };
+
+    // Save theme to localStorage and apply the theme
+    saveButton.addEventListener('click', function () {
+        const selectedTheme = themeSelect.value;
+        localStorage.setItem('theme', selectedTheme);
+
+        // Remove the current theme class and apply the new one
+        document.body.classList.remove('light', 'dark');
+        document.body.classList.add(selectedTheme);
+
+        // Alert to confirm the settings change
+        alert('Settings Saved! Theme changed to ' + selectedTheme);
+    });
+</script>
+{% endblock %}

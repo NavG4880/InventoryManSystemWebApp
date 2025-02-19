@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management System - View Parts</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Inventory Management System - View Parts</h1>
+    </header>
+    
+    <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('add_part_page') }}">Add Part</a>
+        <a href="{{ url_for('view_parts_page') }}">View Parts</a>
+        <a href="{{ url_for('reports_page') }}">Reports</a>
+        <!--<a href="{{ url_for('settings_page') }}">Settings</a>-->
+    </nav>
+    
+    <div class="container">
+
+        <h2>Parts Inventory</h2>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+        {% block content %}
+            <input type="text" id="searchQuery" placeholder="Search by part name">
+            <button onclick="searchParts()">Search</button>
+        {% endblock %}
+        </div>
+
+        <!-- Table to display parts inventory (Initially Empty) -->
+        <table class="parts-table" id="partsTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Part Name</th>
+                    <th>Part Number</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="partsTableBody">
+                <!-- Dynamically filled with search results -->
+            </tbody>
+        </table>
+
+        <p id="noResultsMessage" style="display: none;">No parts found.</p>
+    </div>
+
+    <script>
+    function searchParts() {
+        const query = document.getElementById('searchQuery').value.trim();
+        const table = document.getElementById('partsTable');
+        const tableBody = document.getElementById('partsTableBody');
+        const noResultsMessage = document.getElementById('noResultsMessage');
+
+        if (!query) {
+            table.style.display = "none";  // Hide table if search is empty
+            noResultsMessage.style.display = "none";
+            return;
+        }
+
+        fetch(`/api/search-parts?query=${query}`)
+            .then(response => response.json())
+            .then(data => {
+                tableBody.innerHTML = '';
+                
+                if (data.length === 0) {
+                    table.style.display = "none";
+                    noResultsMessage.style.display = "block";
+                } else {
+                    table.style.display = "table";  
+                    noResultsMessage.style.display = "none";
+
+                    data.forEach(part => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${part.name}</td>
+                            <td>${part.part_number}</td>
+                            <td>${part.category}</td>
+                            <td>${part.quantity}</td>
+                            <td>
+                                <button class="btn edit-btn" onclick="editPart(${part.id})">Edit</button>
+                                <button class="btn delete-btn" onclick="deletePart(${part.id})">Delete</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    document.getElementById("searchQuery").addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            searchParts();
+        }
+    });
+    </script>
+
+</body>
+</html>

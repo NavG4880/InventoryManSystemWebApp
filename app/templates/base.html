@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Part Management System{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Google Fonts for consistent font styles across pages -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Additional styling (if any) -->
+</head>
+<body>
+    <header>
+        <h1 class="site-title">Part Management System</h1>
+    </header>
+
+    <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('add_part_page') }}">Add Part</a>
+        <a href="{{ url_for('view_parts_page') }}">View Parts</a>
+        <a href="{{ url_for('reports_page') }}">Reports</a>
+        <!--<a href="{{ url_for('settings_page') }}">Settings</a>-->
+    </nav>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Part Management System</p>
+    </footer>
+</body>
+</html>

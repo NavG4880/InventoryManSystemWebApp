@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management System - Reports</title>
+    <!-- Link to your styles.css -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <!-- Google Fonts: Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Inventory Management System - Reports</h1>
+    </header>
+
+    <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('add_part_page') }}">Add Part</a>
+        <a href="{{ url_for('view_parts_page') }}">View Parts</a>
+        <a href="{{ url_for('reports_page') }}">Reports</a>
+        <!--<a href="{{ url_for('settings_page') }}">Settings</a>-->
+    </nav>
+
+    <div class="container">
+        {% block content %}
+        <h2>Inventory Reports</h2>
+        <p>Generate and view detailed reports for your parts inventory.</p>
+
+        <!-- Report Filters Section -->
+        <div class="filters">
+            <h3>Filter Reports</h3>
+            <form>
+                <label for="category">Select Category:</label>
+                <select id="category">
+                    <option value="all">All Categories</option>
+                    <option value="electrical">Electrical</option>
+                    <option value="mechanical">Mechanical</option>
+                    <option value="hydraulic">Hydraulic</option>
+                </select>
+
+                <label for="date-range">Select Date Range:</label>
+                <input type="date" id="start-date">
+                <input type="date" id="end-date">
+
+                <button type="submit" class="btn filter-btn">Generate Report</button>
+            </form>
+        </div>
+
+        <!-- Sample Report Tables -->
+        <div class="report-section">
+            <h3>Sample Reports</h3>
+
+            <!-- Report 1: Inventory by Category -->
+            <div class="report-table">
+                <h4>Inventory by Category</h4>
+                <table class="report">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Total Parts</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Electrical</td>
+                            <td>150</td>
+                            <td>$5000</td>
+                        </tr>
+                        <tr>
+                            <td>Mechanical</td>
+                            <td>200</td>
+                            <td>$8000</td>
+                        </tr>
+                        <tr>
+                            <td>Hydraulic</td>
+                            <td>80</td>
+                            <td>$3000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Report 2: Low Stock Items -->
+            <div class="report-table">
+                <h4>Low Stock Items</h4>
+                <table class="report">
+                    <thead>
+                        <tr>
+                            <th>Part Name</th>
+                            <th>Part Number</th>
+                            <th>Category</th>
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Electric Motor</td>
+                            <td>EM123</td>
+                            <td>Electrical</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td>Piston Ring</td>
+                            <td>PR567</td>
+                            <td>Mechanical</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>Hydraulic Pump</td>
+                            <td>HP890</td>
+                            <td>Hydraulic</td>
+                            <td>3</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Report 3: Total Inventory Value -->
+            <div class="report-table">
+                <h4>Total Inventory Value</h4>
+                <table class="report">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Total Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Electrical</td>
+                            <td>$5000</td>
+                        </tr>
+                        <tr>
+                            <td>Mechanical</td>
+                            <td>$8000</td>
+                        </tr>
+                        <tr>
+                            <td>Hydraulic</td>
+                            <td>$3000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% endblock %}
+        </div>
+    </div>
+    <script>
+        // Placeholder script to handle form submission (future functionality)
+        document.querySelector('.filters form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            alert('Report generated based on selected filters');
+        });
+    </script>
+</body>
+</html>
