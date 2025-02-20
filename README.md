@@ -27,9 +27,9 @@ The project follows this architecture:
 │   ├── Dockerfile            # Dockerfile to containerize the application
 │   ├── deploy.yml            # GitHub Actions workflow for CI/CD
 ├── app/                      # Web application source code (Flask-based)
-│   ├── main.py               # Entry point for the Flask app
+│   ├── app.py               # Entry point for the Flask app
 │   ├── requirements.txt      # Python dependencies
-│   ├── templates/            # HTML templates
+│   ├── templates/            # HTML templates- place all html pages here
 │   ├── static/               # CSS, JS, and images
 ├── README.md                 # Project documentation
 ```
